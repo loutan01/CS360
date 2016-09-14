@@ -2,6 +2,26 @@ import datetime
 import random
 import time
 
+class ClearableList:
+    def __init__(self,size):
+        self.size = size
+        self.items = [None] * self.size
+        self.count = 0
+    
+    def append(self,item):
+        if self.count == len(self.items):
+            self.items = [None] * self.size
+            self.count = 0
+        else:
+            self.items[self.count] = item
+            self.count +=1
+    
+    def __getitem__(self,item):
+        if item in self.items:
+            return True
+        else:
+            return None or False
+
 def main():
 
     # Write an XML file with the results
@@ -9,87 +29,58 @@ def main():
 
     file.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
 
-    file.write('<Plot title="Average List Element Access Time">\n')
-
-    # Test lists of size 1000 to 200000. 
-    xmin = 1000
-    xmax = 200000
-
-    # Record the list sizes in xList and the average access time within
-    # a list that size in yList for 1000 retrievals. 
-    xList = []
-    yList = []
-
-    for x in range(xmin, xmax+1, 1000):
-
-        xList.append(x)
-
-        prod = 0
-
-        # Creates a list of size x with all 0's
-        lst = [0] * x
-
-        # let any garbage collection/memory allocation complete or at least
-        # settle down
-        time.sleep(1)
-
-        # Time before the 1000 test retrievals
-        starttime = datetime.datetime.now()
-
-        for v in range(1000):
-            # Find a random location within the list
-            # and retrieve a value. Do a dummy operation
-            # with that value to ensure it is really retrieved. 
-            index = random.randint(0,x-1)
-            val = lst[index]
-            prod = prod * val
-        # Time after the 1000 test retrievals  
-        endtime = datetime.datetime.now()
-
-        # The difference in time between start and end.
-        deltaT = endtime - starttime
-
-        # Divide by 1000 for the average access time
-        # But also multiply by 1000000 for microseconds.
-        accessTime = deltaT.total_seconds() * 1000
-
-        yList.append(accessTime)
-
+    file.write('<Plot title=" List Element Append Time">\n')
+        
+    xmin = 500
+    xmax = 100000    
+    
     file.write('  <Axes>\n')
     file.write('    <XAxis min="'+str(xmin)+'" max="'+str(xmax)+'">List Size</XAxis>\n')
-    file.write('    <YAxis min="'+str(min(yList))+'" max="'+str(60)+'">Microseconds</YAxis>\n')
+    file.write('    <YAxis min="'+str(0)+'" max="'+str(0.1)+'">Microseconds</YAxis>\n')
     file.write('  </Axes>\n')
+    
 
-    file.write('  <Sequence title="Average Access Time vs List Size" color="red">\n')   
+    
+    
+    
 
-    for i in range(len(xList)):   
-        file.write('    <DataPoint x="'+str(xList[i])+'" y="'+str(yList[i])+'"/>\n')    
-
-    file.write('  </Sequence>\n')
-
-    # This part of the program tests access at 100 random locations within a list
-    # of 200,000 elements to see that all the locations can be accessed in 
-    # about the same amount of time.
-    xList = lst
-    yList = [0] * 200000
-
-    time.sleep(2)
-
-    for i in range(100):
-        starttime = datetime.datetime.now()
-        index = random.randint(0,200000-1)
-        xList[index] = xList[index] + 1
-        endtime = datetime.datetime.now()
-        deltaT = endtime - starttime   
-        yList[index] = yList[index] + deltaT.total_seconds() * 1000000
-
-    file.write('  <Sequence title="Access Time Distribution" color="blue">\n')           
-
-    for i in range(len(xList)):
-        if xList[i] > 0:
-            file.write('    <DataPoint x="'+str(i)+'" y="'+str(yList[i]/xList[i])+'"/>\n')    
-
-    file.write('  </Sequence>\n') 
+    
+    def clearableListAppendTime(size,xmax,xmin,color):
+        #file.write('  <Sequence title="Access Time Distribution" color="blue">\n') 
+        file.write('  <Sequence title="Append time for list of size '+str(size)+'" color="'+str(color)+'">\n')
+        
+        clearableList = ClearableList(size)
+        
+        # Record the list sizes in xList and the append time within
+        # a list that size in yList for 100000 appends
+        
+        xList = []
+        yList = []
+        for x in range(xmin,xmax,1000):
+            xList.append(x)
+            
+            starttime = datetime.datetime.now()
+            clearableList.append(x)
+            endtime = datetime.datetime.now()
+            deltaT = endtime - starttime
+            
+            # Divide by 1000 for the average access time
+            # But also multiply by 1000000 for microseconds.
+            accessTime = deltaT.total_seconds() * 1000
+    
+            yList.append(accessTime)
+            
+            for i in range(len(xList)):   
+                file.write('    <DataPoint x="'+str(xList[i])+'" y="'+str(yList[i])+'"/>\n')    
+        
+        file.write('  </Sequence>\n')
+        
+        
+        
+        
+    clearableListAppendTime(100, xmax, xmin, "red")
+    clearableListAppendTime(1000, xmax, xmin, "green")
+    clearableListAppendTime(10000,xmax,xmin, "blue")
     file.write('</Plot>\n')
     file.close()
 
