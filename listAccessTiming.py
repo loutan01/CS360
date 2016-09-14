@@ -38,13 +38,7 @@ def main():
     file.write('    <XAxis min="'+str(xmin)+'" max="'+str(xmax)+'">List Size</XAxis>\n')
     file.write('    <YAxis min="'+str(0)+'" max="'+str(0.1)+'">Microseconds</YAxis>\n')
     file.write('  </Axes>\n')
-    
 
-    
-    
-    
-
-    
     def clearableListAppendTime(size,xmax,xmin,color):
         #file.write('  <Sequence title="Access Time Distribution" color="blue">\n') 
         file.write('  <Sequence title="Append time for list of size '+str(size)+'" color="'+str(color)+'">\n')
@@ -74,10 +68,7 @@ def main():
                 file.write('    <DataPoint x="'+str(xList[i])+'" y="'+str(yList[i])+'"/>\n')    
         
         file.write('  </Sequence>\n')
-        
-        
-        
-        
+
     clearableListAppendTime(100, xmax, xmin, "red")
     clearableListAppendTime(1000, xmax, xmin, "green")
     clearableListAppendTime(10000,xmax,xmin, "blue")
