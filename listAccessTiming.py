@@ -31,7 +31,7 @@ def main():
 
     file.write('<Plot title=" List Element Append Time">\n')
         
-    xmin = 500
+    xmin = 1000
     xmax = 100000    
     
     file.write('  <Axes>\n')
