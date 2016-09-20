@@ -71,7 +71,7 @@ class HashSet:
             self.add(item)
           
     def __str__(self):
-        pass
+        return self.items
     
     def __iter__(self):
         for i in range(len(self.items)):
@@ -85,6 +85,8 @@ class HashSet:
             load = self.numItems / len(self.items)
             if load >= 0.75:
                 self.items = HashSet.__rehash(self.items,[None]*2*len(self.items))
+                
+                
     def remove(self, item):
         if HashSet.__remove(item,self.items):
             self.numItems -= 1
@@ -95,35 +97,47 @@ class HashSet:
             raise KeyError("Item not in HashSet")
         
     def discard(self, item):
-        #Remove the item if it exists in self and ignore otherwise
         pass
+      
+        #Remove the item if it exists in self and ignore otherwise
+
         
     def pop(self):
         pass
             
     def clear(self):
-        pass
+        self.items = [None] * 10
+        self.numItems = 0
         
     def update(self, other):
         #adds contents of other to self
-        pass
+        for item in other.items:
+            if item not in self.items:
+                self.add(item)
+            
+       
             
     def intersection_update(self, other):
+        for item in self.items:
+            if item not in other.items:
+                self.remove(item)
+                
+            
+            
         #updates self to contain only the intersection of the elements from self and other
-        pass
+
             
     def difference_update(self, other):
         #Subtracts from self the elements of other
-        for item in other:
+        for item in other.items:
             self.discard(item)
                 
     def symmetric_difference_update(self, other):
-        #Updates self with the symmetric differnce of self and other
         pass
                 
     # Following are the accessor methods for the HashSet  
-    def __len__(self):
-        pass
+    def __len__(self):  
+        return self.numItems
     
     def __contains__(self, item):
         idx = hash(item) % len(self.items)
@@ -138,7 +152,12 @@ class HashSet:
     # One extra method for use with the HashMap class. This method is not needed in the 
     # HashSet implementation, but it is used by the HashMap implementation. 
     def __getitem__(self, item):
-        pass      
+        idx = hash(item) % len(self.items)
+        while self.items[idx] != None:
+            if self.items[idx] == item:
+                return self.items[idx]
+            
+            idx = (idx + 1) % len(self.items)
         
     def not__contains__(self, item):
         pass
@@ -155,14 +174,21 @@ class HashSet:
         pass
     
     def union(self, other):
-        pass
+        #returns a new set which contains all elements in self and other
+        return HashSet().update(other)
+        
     
     def intersection(self, other):
-        pass
+        result = HashSet(self)
+        result.intersection_update(other)
+        return result
     
-    #done
+    
     def difference(self, other):
-        pass
+        result = HashSet(self)
+        result.difference_update(other)     
+        return result
+
     
     def symmetric_difference(self, other):
         pass
@@ -212,9 +238,12 @@ class HashSet:
 def main():
     s = HashSet(list(range(100)))
     
+  
     t = HashSet(list(range(10,20)))
     
+    
     u = HashSet(list(range(10,20)))
+    
     
     if len(t) == len(u) and len(t) == 10:
         print("Test 1 Passed")
@@ -237,6 +266,7 @@ def main():
     else:
         print("Test 3 Failed")
         
+    
     t.clear()
     t.update(u)
     
@@ -251,9 +281,7 @@ def main():
     test6Passed = True
     
     for x in range(1,10):
-        if x in s:
-            pass
-        else:
+        if x not in s:
             test5Passed = False
             print("Test 5 Failed on",x)
             
@@ -291,8 +319,9 @@ def main():
     x = HashSet(["a","b","c","d","e","f","g","h","i","j","k"])
     
     y = HashSet(["c","d","e","l","m","n"])
-    
+
     z = x.difference(y)
+    
     
     if len(z) == 8:
         print("Test 9 Passed")
@@ -304,7 +333,7 @@ def main():
     for item in z:
         if item not in ["a","b","f","g","h","i","j","k"]:
             test10Passed = False
-            print("Test 10 Failed on", x)
+            print("Test 10 Failed on", item)
             
     if test10Passed:
         print("Test 10 Passed")
